@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
-import Layers from './Layers'
-import { data } from './data/data';
-import "./Map.css";
+import { data } from '../data/data';
+import "../CSS/Map.css";
+import CSV from "../CSV/CSV"
+
 const Map = ({base, mapLayer}) => {
   const intBase = parseInt(base)
   // Map state:
@@ -12,15 +13,10 @@ const Map = ({base, mapLayer}) => {
   const tileRef = useRef(null);
   const pointsRef = useRef(null);
   // Base tile for the map:
-  const mapStyles = {
-    overflow: 'hidden',
-    width: '100%',
-    height: '100vh',
-  };
   const mapParams = {
     center: [51.5072, 0.1276], // USA
     zoom: 8,
-    zoomControl: false,
+    zoomControl: true,
     zoomSnap: 0.75,
     maxBounds: L.latLngBounds(L.latLng(-150, -240), L.latLng(150, 240)),
     closePopupOnClick: false, // Start with just the base layer
@@ -59,9 +55,10 @@ const Map = ({base, mapLayer}) => {
       map.addLayer(tileRef.current)
     }
   },[base])
+
   useEffect(() => {
-    console.log(pointsRef)
-    console.log(mapLayer)
+    // console.log(pointsRef)
+    // console.log(mapLayer)
     if(mapLayer){
       pointsRef.current = L.geoJSON(data)
       map.addLayer(pointsRef.current)
@@ -70,6 +67,7 @@ const Map = ({base, mapLayer}) => {
       map.removeLayer(pointsRef.current)
     }
   },[mapLayer])
+
   // useEffect(() => {
     
   //   console.log(points)
@@ -195,7 +193,8 @@ const Map = ({base, mapLayer}) => {
 
   return (
     <>
-      <div id="map" style={mapStyles} />
+      <div id="map"/>
+      <CSV/>
     </>
   );
 };

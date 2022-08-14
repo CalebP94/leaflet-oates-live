@@ -1,11 +1,17 @@
 import React from "react";
-import Map from "./Map";
-import SideBar from "./SideBar";
+import Map from "./Mapping/Map";
+import SideBar from "./Panels/SideBar";
+import "./CSS/Layout.css"
+import CSV from "./CSV/CSV"
 
 export default function App() {
   return (
-    <div>
+    <>
+
+    <div className="parent">
       <SideBar />
     </div>
+    
+    </>
   );
 }

@@ -1,9 +1,8 @@
 import React, {useState} from "react";
-import "./Layout.css"
-import Map from "./Map";
+import "../CSS/Layout.css"
+import Map from "../Mapping/Map";
 import Section from "./Section";
-
-
+import CSV from "../CSV/CSV"
 
 function SideBar() {
 
@@ -13,13 +12,13 @@ function SideBar() {
     const valueI = e.target.value
     setBase(preVal => valueI)
   }
+
   const pointChange = (e) => {
     console.log(e)
     setMapLayer(!mapLayer)
   }
-  
   return (
-    <div className="parent">
+    <>
       <div className="wrapper">
         <nav id="sidebar">
           <div className="sidebar-header">
@@ -33,7 +32,7 @@ function SideBar() {
                 <label htmlFor="baseLayer" className="ml-1">
                   Base Map
                 </label>
-                <select className="form-select p-2 h-25 w-75 ml-3" onChange={handleChange}>
+                <select className="form-select p-2 h-15 w-75 ml-3" onChange={handleChange}>
                   <option value="1"> Open Street Map</option>
                   <option value="2"> Topographic </option>
                   <option value="3"> Google Hypbrid </option>
@@ -63,9 +62,9 @@ function SideBar() {
         </nav>
       </div>
       <div className="child">
-        <Map base={base} mapLayer={mapLayer}/>
+        <Map base={base} mapLayer={mapLayer} />
       </div>
-    </div>
+    </>
   );
 }
 
