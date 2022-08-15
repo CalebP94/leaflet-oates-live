@@ -12,6 +12,7 @@ const Map = ({base, mapLayer}) => {
   const mapRef = useRef(null);
   const tileRef = useRef(null);
   const pointsRef = useRef(null);
+
   // Base tile for the map:
   const mapParams = {
     center: [51.5072, 0.1276], // USA
@@ -57,8 +58,7 @@ const Map = ({base, mapLayer}) => {
   },[base])
 
   useEffect(() => {
-    // console.log(pointsRef)
-    // console.log(mapLayer)
+
     if(mapLayer){
       pointsRef.current = L.geoJSON(data)
       map.addLayer(pointsRef.current)
@@ -194,7 +194,7 @@ const Map = ({base, mapLayer}) => {
   return (
     <>
       <div id="map"/>
-      <CSV/>
+      <CSV />
     </>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./CSV.css"
 
 export default function Table({array, header, displayTable}){
-    console.log(displayTable)
+    //console.log(displayTable)
 
     if(displayTable){
         return(
