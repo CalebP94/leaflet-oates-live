@@ -1,7 +1,9 @@
 import React from 'react';
 import useCollapse from 'react-collapsed';
+//import PointToggling from './to-be-deleted/PointToggling';
 
 export default function Section(props) {
+    // console.log(props.children)
     const config = {
         defaultExpanded: props.defaultExpanded || false,
         collapsedHeight: props.collapsedHeight || 0
