@@ -14,6 +14,7 @@ Beginning of CSV Portion
 */
   const [file, setFile] = useState();
   const [array, setArray] = useState([]);
+
   const [displayTable, setDisplayTable] = useState(false);
   const fileReader = new FileReader();
   const handleOnChange = (e) => {
@@ -80,7 +81,9 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
 
   const [pointLayerArr, setPointLayerArr] = useState([]);
   const [renderer, setRenderer] = useState(false);
-  const [geoJson, setGeoJson] = useState({...geoJSONState});
+  const [geoJsonObj, setGeoJsonObj] = useState({...geoJSONState});
+  const [toGeoJsonArr, setToGeoJsonArr] = useState(null);
+  
   const [nameAndMap, setNameAndMap] = useState({...nameAndMapObject});
   const [nameAndMapArr, setNameAndMapArr] = useState([]);
   const [featuresArr, setFeaturesArr] = useState([]);
@@ -123,22 +126,37 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
         finalArr.push(i)
       }
     })
-    geoJson.features = finalArr
-    setGeoJson(geoJson)
+    geoJsonObj.features = finalArr
+    setGeoJsonObj(geoJsonObj)
   },[featuresArr]);
 
   useEffect(()=>{
-    if(nameAndMap.layerName != ''){
-      setNameAndMapArr(current => [...current, nameAndMap])
-    }
-    
+    setTimeout(() => {
+      if(nameAndMap.layerName != ''){
+        setNameAndMapArr(current => [...current, nameAndMap])
+        setToGeoJsonArr(L.geoJSON(geoJsonObj, {
+          onEachFeature: function(feature, layer){
+            let out = {};
+            if(feature.properties){
+              for(let objVal in feature.properties){
+                layer.bindPopup('<p>'+objVal+':'+feature.properties[objVal]+'</p>') 
+                }
+            }
+          }
+        }))
+        // setGeoJsonArr(current => [...current, toGeoJsonArr])
+      }
+    }, 500);
+    setRenderer(true)
   },[nameAndMap])
 
-  useEffect(() => {
-    //let name = geoJson.layerName;
-      setPointLayerArr(current => [...current, geoJson])
-      setRenderer(true)
-    }, [geoJson]);
+
+
+  // useEffect(() => {
+  //   //let name = geoJson.layerName;
+  //     setPointLayerArr(current => [...current, geoJson])
+  //     
+  //   }, [geoJson]);
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -149,7 +167,7 @@ End of Toggling Portion
 */
     return (
       <>
-        <SideBar renderer={renderer} pointLayerArr={pointLayerArr} featuresArr={featuresArr} nameAndMapArr={nameAndMapArr}/>
+        <SideBar  renderer={renderer} nameAndMapArr={nameAndMapArr} toGeoJsonArr={toGeoJsonArr}/>
           <div className="csv">
               <label htmlFor="csvFileInput" className="custom-file-upload">
                 <i className="fa fa-cloud-upload"></i>

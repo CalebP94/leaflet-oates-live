@@ -3,14 +3,21 @@ import "../CSS/Layout.css"
 import Map from "../Mapping/Map";
 import Section from "./Section";
 
-function SideBar({renderer, pointLayerArr, nameAndMapArr}) {
-  //fconsole.log(nameAndMapArr);
+function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
   const[base, setBase] = useState('1');
-  //const [mapLayer, setMapLayer] = useState(false);
-  //const [changeMapped, setChangedMap]=useState(false);
   const [index, setIndex] = useState(null);
   const [clickCount, setClickCount] = useState(0);
-  //console.log(index, clickCount)
+  const [geoJsonArr, setGeoJsonArr] = useState([]);
+  console.log(geoJsonArr)
+
+   
+ useEffect(()=>{
+  if(toGeoJsonArr){
+    console.log("CHANGED GEJSON ARR", toGeoJsonArr)
+    setGeoJsonArr(current => [...current, toGeoJsonArr])
+  }
+ },[toGeoJsonArr])
+
   const handleChange = (e) => {
     const valueI = e.target.value
     setBase(preVal => valueI)
@@ -70,7 +77,7 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
           </nav>
         </div>
         <div className="child">
-          <Map base={base} pointLayerArr={pointLayerArr} index={index} clickCount={clickCount} />
+          <Map base={base} index={index} clickCount={clickCount} />
         </div>
       </>
     );
@@ -118,7 +125,7 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
           </nav>
         </div>
         <div className="child">
-          <Map base={base} pointLayerArr={pointLayerArr} index = {index} clickCount = {clickCount} nameAndMapArr={nameAndMapArr}/>
+          <Map base={base} index = {index} clickCount = {clickCount} nameAndMapArr={nameAndMapArr} geoJsonArr={geoJsonArr}/>
         </div>
       </>
     );

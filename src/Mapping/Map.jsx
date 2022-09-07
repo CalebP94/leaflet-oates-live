@@ -7,11 +7,10 @@ import "../CSS/Map.css";
 import CSV from "../CSV/CSV"
 import InheritMap from './InheritMap';
 
-const Map = ({base, pointLayerArr, index, clickCount, nameAndMapArr}) => {
-  console.log(pointLayerArr)
+const Map = ({base, index, clickCount, nameAndMapArr, toGeoJsonArr, geoJsonArr}) => {
+
 // Map state:
-  const [toGeoJson, setToGeoJson] = useState(null);  
-  const [geoJsonArr, setGeoJsonArr] = useState([])
+
   //console.log(toGeoJson)
   const [map, setMap] = useState(null);
   const mapRef = useRef(null);
@@ -29,25 +28,10 @@ const Map = ({base, pointLayerArr, index, clickCount, nameAndMapArr}) => {
     setMap(mapRef.current);
   }, []);
 
-  useEffect(() => {
-    function geoJsonSet(){
-      if(clickCount){
-        setToGeoJson(L.geoJSON(pointLayerArr[index]))
-      }
-    }
-    geoJsonSet();
-  },[index])
-
-  useEffect(()=> {
-    //console.log(toGeoJson)
-    if(toGeoJson){
-      setGeoJsonArr(current => [...current, toGeoJson])
-    }
-  }, [toGeoJson])
 
   return (
     <>
-      <InheritMap map={map} base={base} toGeoJson={toGeoJson} pointLayerArr={pointLayerArr} index={index} clickCount={clickCount} nameAndMapArr ={nameAndMapArr} geoJsonArr = {geoJsonArr}/>
+      <InheritMap map={map} base={base} index={index} clickCount={clickCount} nameAndMapArr ={nameAndMapArr} toGeoJsonArr={toGeoJsonArr} geoJsonArr={geoJsonArr}/>
     </>
   );
 };

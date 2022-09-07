@@ -2,19 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import L, { point } from 'leaflet';
 import "leaflet.browser.print/dist/leaflet.browser.print.js";
 
-export default function InheritMap({map, base, pointLayerArr, index, clickCount, nameAndMapArr, toGeoJson, geoJsonArr}){
-    console.log(geoJsonArr);
+export default function InheritMap({map, base, index, clickCount, nameAndMapArr, geoJsonArr}){
+
     const [changerMap, setChangerMap] = useState(null);
     const tileRef = useRef(null);
-    const pointsRef = useRef(null);
     const intBase = parseInt(base);
-
     useEffect(() => {
         async function mapAwait(){
             let mapper = await map
             let browserPrinter = L.control.browserPrint()
             browserPrinter.addTo(mapper)
-            //console.log(mapper)
         }
         mapAwait();
     },[map])
@@ -52,25 +49,35 @@ export default function InheritMap({map, base, pointLayerArr, index, clickCount,
         }
     },[base])
 
+    // useEffect(() => {
+    //     function geoJsonSet(){
+    //       if(clickCount){
+    //         setToGeoJson(L.geoJSON(pointLayerArr[index]))
+    //       }
+    //     }
+    //     geoJsonSet();
+    //   },[index])
+    
+    //   useEffect(()=> {
+    //     //console.log(toGeoJson)
+    //     if(toGeoJson){
+    //       setGeoJsonArr(current => [...current, toGeoJson])
+    //     }
+    //   }, [toGeoJson])
+
 //GeoJSON Reading
     useEffect(()=>{
         if(index){
-            //console.log(toGeoJson)
-            //console.log("toGeoJson", toGeoJson)
-            //console.log("NAME AND MAP", nameAndMapArr[index]);
+            let pointsToAdd = geoJsonArr[index]
             if(nameAndMapArr[index].mapped){
-                console.log("ADD TO MAP")
-                console.log(geoJsonArr[index])
-                console.log(nameAndMapArr[index])
+                // pointsToAdd.bindPopup("help")
+                map.addLayer(pointsToAdd)
             }
             else if(!nameAndMapArr[index].mapped){
-                console.log("REMOVE FROM MAP")
-                console.log(geoJsonArr[index])
-                console.log(nameAndMapArr[index])
+                map.removeLayer(pointsToAdd)
             }
         }
     },[clickCount])
-
 // useEffect(() => {
 
   
