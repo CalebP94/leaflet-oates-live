@@ -136,12 +136,33 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
         setNameAndMapArr(current => [...current, nameAndMap])
         setToGeoJsonArr(L.geoJSON(geoJsonObj, {
           onEachFeature: function(feature, layer){
-            let out = {};
-            if(feature.properties){
-              for(let objVal in feature.properties){
-                layer.bindPopup('<p>'+objVal+':'+feature.properties[objVal]+'</p>') 
+            // function formatPopup(object){
+            //   let out = [];
+            //   // if(feature.properties){
+            //     for(let objVal in object){
+            //       // layer.bindPopup('<p>'+objVal+':'+feature.properties[objVal]+'</p>') 
+            //       let string = objVal +': '+feature.properties[objVal]
+            //       out.push(string)
+            //       }
+            // }
+            let formatPopup = (object) =>{
+              let out = [];
+              // if(feature.properties){
+                for(let objVal in object){
+                  // layer.bindPopup('<p>'+objVal+':'+feature.properties[objVal]+'</p>') 
+                  let string = objVal +': '+object[objVal]
+                  out.push(string)
                 }
+                return out.join('<br>');
             }
+            console.log(formatPopup(feature.properties))
+
+            let callout = formatPopup(feature.properties)
+
+            layer.bindPopup('<p>'+callout+'</p>')
+
+              
+            // }
           }
         }))
         // setGeoJsonArr(current => [...current, toGeoJsonArr])
