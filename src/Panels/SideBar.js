@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import "../CSS/Layout.css"
 import Map from "../Mapping/Map";
 import Section from "./Section";
@@ -8,12 +8,12 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
   const [index, setIndex] = useState(null);
   const [clickCount, setClickCount] = useState(0);
   const [geoJsonArr, setGeoJsonArr] = useState([]);
-  console.log(geoJsonArr)
+  //console.log(geoJsonArr)
 
    
  useEffect(()=>{
   if(toGeoJsonArr){
-    console.log("CHANGED GEJSON ARR", toGeoJsonArr)
+    //log("CHANGED GEJSON ARR", toGeoJsonArr)
     setGeoJsonArr(current => [...current, toGeoJsonArr])
   }
  },[toGeoJsonArr])
@@ -39,6 +39,26 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
       nameAndMapArr[indexSearch].mapped = true
     }
   };
+
+  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
+
+  const [show, setShow] = useState(false);
+  console.log(anchorPoint, show)
+
+  const handleClick = (e) => {
+    e.preventDefault()
+    if (e.type === "contextmenu") {
+      console.log(e)
+      //console.log("Right click");
+      setAnchorPoint({ x: e.pageX, y: e.pageY });
+      setShow(!show)
+    }
+  };
+
+  const initiatePointDensity=() =>{
+    console.log("Point Density")
+  }
+
 
   if(!renderer){
     return (
@@ -109,9 +129,23 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
             <div className="m-3">
                 <Section title="Layers" defaultExpanded="true">
                   {nameAndMapArr.map((i, index)=>
-                    <label key={index}>
-                      <input value={index} key={index} type="checkbox" onChange={pointChange}/> {i.layerName}
+                  <div >
+                    <label key={index} onContextMenu={handleClick}>
+                      <input value={index} key={index} type="checkbox" onChange={pointChange} /> {i.layerName }
                     </label>
+                    {show ? (
+                      <ul
+                        className="menu"
+                        style={{
+                          top: anchorPoint.y,
+                          left: anchorPoint.x
+                        }}
+                      >
+                      <li onClick={initiatePointDensity}>Point Density</li>
+                      <li>Cluster Layer</li>
+                      <li>Paste</li>
+                      </ul>):(<></>)}
+                  </div>
                   )}
                 <br/><br/>
                 </Section>

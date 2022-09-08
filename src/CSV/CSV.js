@@ -155,7 +155,7 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
                 }
                 return out.join('<br>');
             }
-            console.log(formatPopup(feature.properties))
+            //console.log(formatPopup(feature.properties))
 
             let callout = formatPopup(feature.properties)
 
