@@ -47,6 +47,7 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
 
   const handleClick = (e) => {
     e.preventDefault()
+    console.log(e.type)
     if (e.type === "contextmenu") {
       console.log(e)
       //console.log("Right click");
@@ -57,7 +58,10 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
 
   const initiatePointDensity=() =>{
     console.log("Point Density")
+    setShow(!show)
   }
+
+
 
 
   if(!renderer){
@@ -143,7 +147,8 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
                       >
                       <li onClick={initiatePointDensity}>Point Density</li>
                       <li>Cluster Layer</li>
-                      <li>Paste</li>
+                      <li>Symbology</li>
+                      <li>Hover Callout</li>
                       </ul>):(<></>)}
                   </div>
                   )}
