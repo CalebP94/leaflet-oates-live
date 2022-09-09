@@ -67,10 +67,6 @@
   list-style: none;
   box-shadow: 0 0 5px 0 rgb(0, 0, 0);
 }
-
-.menu li{
-  
-}
 .menu li:hover{
   background-color: rgb(230, 229, 229);
 }

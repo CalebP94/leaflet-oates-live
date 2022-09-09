@@ -3,6 +3,8 @@ import "./CSV.css"
 import SideBar from "../Panels/SideBar";
 import Table from "./Table";
 import "../CSS/Map.css";
+import Cluster from "../tools/Cluster";
+import PointDensity from "../tools/PointDensity";
 
 export default function CSV({mapLayer, pointsRef}) {
 /*
@@ -14,7 +16,6 @@ Beginning of CSV Portion
 */
   const [file, setFile] = useState();
   const [array, setArray] = useState([]);
-
   const [displayTable, setDisplayTable] = useState(false);
   const fileReader = new FileReader();
   const handleOnChange = (e) => {
@@ -97,7 +98,6 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
     } 
 
     let toGeoJson = array.map((i) => {
-
       let lat = i[Object.keys(i)[Object.keys(i).length-1]]
       let lon = i[Object.keys(i)[Object.keys(i).length-2]]
       if(lat){ 
@@ -136,36 +136,18 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
         setNameAndMapArr(current => [...current, nameAndMap])
         setToGeoJsonArr(L.geoJSON(geoJsonObj, {
           onEachFeature: function(feature, layer){
-            // function formatPopup(object){
-            //   let out = [];
-            //   // if(feature.properties){
-            //     for(let objVal in object){
-            //       // layer.bindPopup('<p>'+objVal+':'+feature.properties[objVal]+'</p>') 
-            //       let string = objVal +': '+feature.properties[objVal]
-            //       out.push(string)
-            //       }
-            // }
             let formatPopup = (object) =>{
               let out = [];
-              // if(feature.properties){
                 for(let objVal in object){
-                  // layer.bindPopup('<p>'+objVal+':'+feature.properties[objVal]+'</p>') 
                   let string = objVal +': '+object[objVal]
                   out.push(string)
                 }
                 return out.join('<br>');
             }
-            //console.log(formatPopup(feature.properties))
-
             let callout = formatPopup(feature.properties)
-
             layer.bindPopup('<p>'+callout+'</p>')
-
-              
-            // }
           }
         }))
-        // setGeoJsonArr(current => [...current, toGeoJsonArr])
       }
     }, 500);
     setRenderer(true)

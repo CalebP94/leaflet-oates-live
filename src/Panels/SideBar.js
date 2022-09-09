@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useCallback} from "react";
 import "../CSS/Layout.css"
 import Map from "../Mapping/Map";
+import PointDensity from "../tools/PointDensity";
 import Section from "./Section";
 
 function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
@@ -9,29 +10,23 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
   const [clickCount, setClickCount] = useState(0);
   const [geoJsonArr, setGeoJsonArr] = useState([]);
   //console.log(geoJsonArr)
-
-   
+//----------------------------------------------------------------------------------------
+  //GeoJson Array Creation
+  //----------------------------------------------------------------------------------------
  useEffect(()=>{
   if(toGeoJsonArr){
     //log("CHANGED GEJSON ARR", toGeoJsonArr)
     setGeoJsonArr(current => [...current, toGeoJsonArr])
   }
  },[toGeoJsonArr])
-
   const handleChange = (e) => {
     const valueI = e.target.value
     setBase(preVal => valueI)
   };
-
   const pointChange = (e) => {
     let indexSearch = e.target.value;
     setIndex(indexSearch)
     setClickCount( value => value+=1)
-    //setChangedMap(!changeMapped)
-
-/*
-Comitted Out becuase redoing the geoJson for L.geoJson()
-*/
     if(nameAndMapArr[indexSearch].mapped){
       nameAndMapArr[indexSearch].mapped = false
     }
@@ -41,28 +36,34 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
   };
 
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
-
   const [show, setShow] = useState(false);
-  console.log(anchorPoint, show)
+  const [renderPointDensity, setRenderPointDensity] = useState(false);
+
 
   const handleClick = (e) => {
     e.preventDefault()
     console.log(e.type)
     if (e.type === "contextmenu") {
       console.log(e)
-      //console.log("Right click");
       setAnchorPoint({ x: e.pageX, y: e.pageY });
       setShow(!show)
     }
   };
-
   const initiatePointDensity=() =>{
     console.log("Point Density")
     setShow(!show)
+    setRenderPointDensity(!renderPointDensity)
   }
-
-
-
+  const initiateCluster=() =>{
+    console.log("Point Density")
+    setShow(!show)
+  }
+  const initiateSymbology=()=>{
+    setShow(!show)
+  }
+  const initiateHover=()=>{
+    setShow(!show)
+  }
 
   if(!renderer){
     return (
@@ -106,7 +107,6 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
       </>
     );
   }
-
   else{
     return (
       <>
@@ -146,9 +146,9 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
                         }}
                       >
                       <li onClick={initiatePointDensity}>Point Density</li>
-                      <li>Cluster Layer</li>
-                      <li>Symbology</li>
-                      <li>Hover Callout</li>
+                      <li onClick={initiateCluster}>Cluster Layer</li>
+                      <li onClick={initiateSymbology}>Symbology </li>
+                      <li onClick={initiateHover}>Hover Callout</li>
                       </ul>):(<></>)}
                   </div>
                   )}
@@ -158,14 +158,18 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
                   <br/><br/>
                 </Section>
                 <Section title="Density" collapsedHeight="32">
+                
                 <br/><br/>
                 </Section>
           </div>
           </nav>
         </div>
         <div className="child">
+          <PointDensity renderPointDensity={renderPointDensity}/>
           <Map base={base} index = {index} clickCount = {clickCount} nameAndMapArr={nameAndMapArr} geoJsonArr={geoJsonArr}/>
+
         </div>
+        
       </>
     );
   }
