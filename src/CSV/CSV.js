@@ -174,6 +174,9 @@ End of Toggling Portion
           <div className="csv">
               <label htmlFor="csvFileInput" className="custom-file-upload">
                 <i className="fa fa-cloud-upload"></i>
+                <div id="loadCSV">
+                  Upload CSV
+                </div>
               </label>
                 <input
                     type={"file"}

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L, { point } from 'leaflet';
 import "leaflet.browser.print/dist/leaflet.browser.print.js";
+import "leaflet.markercluster/dist/leaflet.markercluster";
 
-export default function InheritMap({map, base, index, clickCount, nameAndMapArr, geoJsonArr}){
+export default function InheritMap({map, base, index, clickCount, nameAndMapArr, geoJsonArr, heatLayerValue}){
 
     const [changerMap, setChangerMap] = useState(null);
     const tileRef = useRef(null);
@@ -220,7 +221,11 @@ export default function InheritMap({map, base, index, clickCount, nameAndMapArr,
   //     <CSV mapLayer={mapLayer} pointsRef={pointsRef}/>
   //   </>
   // );
-
+    useEffect(() =>{
+        if(heatLayerValue){
+            let heatLayerGeo = geoJsonArr[index]
+        }
+    },[heatLayerValue])
 return(
     <>
         <div id="map"/>

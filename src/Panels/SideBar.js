@@ -9,13 +9,12 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
   const [index, setIndex] = useState(null);
   const [clickCount, setClickCount] = useState(0);
   const [geoJsonArr, setGeoJsonArr] = useState([]);
-  //console.log(geoJsonArr)
-//----------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------------------------
   //GeoJson Array Creation
-  //----------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------
  useEffect(()=>{
   if(toGeoJsonArr){
-    //log("CHANGED GEJSON ARR", toGeoJsonArr)
     setGeoJsonArr(current => [...current, toGeoJsonArr])
   }
  },[toGeoJsonArr])
@@ -35,10 +34,16 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
     }
   };
 
+//---------------------------------------------------------------------------------------------------------------------------------
+//  Right Click Event
+//---------------------------------------------------------------------------------------------------------------------------------
+
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [show, setShow] = useState(false);
   const [renderPointDensity, setRenderPointDensity] = useState(false);
-
+  console.log(renderPointDensity)
+  const [renderCluster, setRenderCluster] = useState(false);
+  
 
   const handleClick = (e) => {
     e.preventDefault()
@@ -53,10 +58,13 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
     console.log("Point Density")
     setShow(!show)
     setRenderPointDensity(!renderPointDensity)
+    setRenderCluster(false)
   }
   const initiateCluster=() =>{
     console.log("Point Density")
     setShow(!show)
+    setRenderPointDensity(false)
+    setRenderCluster(!renderCluster)
   }
   const initiateSymbology=()=>{
     setShow(!show)
@@ -64,6 +72,14 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
   const initiateHover=()=>{
     setShow(!show)
   }
+  const [heatLayerValue, setHeatLayerValue] = useState(0)
+  const [clusterValue, setClusterValue] = useState(80)
+  const onHeatRadiusChange = (e) => {
+      setHeatLayerValue(e.target.value)
+  }
+  const onClusterChange = (e) => {
+    setClusterValue(e.target.value)
+}
 
   if(!renderer){
     return (
@@ -165,11 +181,35 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
           </nav>
         </div>
         <div className="child">
-          <PointDensity renderPointDensity={renderPointDensity}/>
-          <Map base={base} index = {index} clickCount = {clickCount} nameAndMapArr={nameAndMapArr} geoJsonArr={geoJsonArr}/>
-
+        <Map base={base} index = {index} clickCount = {clickCount} nameAndMapArr={nameAndMapArr} geoJsonArr={geoJsonArr} heatLayerValue={heatLayerValue}/>
+        {renderPointDensity ? (
+                <div className="toolbox">
+                  <table>
+                    <h5>Heat Analysis</h5>
+                      <tr>
+                          <td><label for="radius">radius:</label></td>
+                          <td><input onChange={onHeatRadiusChange} id="radius" type="range" min="0" max="200" value={heatLayerValue}/></td>
+                          <td><span id="radiusOut"></span> {heatLayerValue} x</td>
+                      </tr>
+                  </table>
+              </div>
+        ):<></>}
+                {renderCluster ? (
+                <div className="toolbox">
+                  <table>
+                      <tr>
+                      <h5>Cluster Control</h5>
+                      </tr>
+                      <tr>
+                          <td><label for="radius">radius:</label></td>
+                          <td><input onChange={onClusterChange} id="radius" type="range" min="0" max="200" value={clusterValue}/></td>
+                          <td><span id="radiusOut"></span> {heatLayerValue} x</td>
+                      </tr>
+                  </table>
+              </div>
+        ):<></>}
         </div>
-        
+
       </>
     );
   }

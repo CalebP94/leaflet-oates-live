@@ -2,12 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import L, { point } from 'leaflet';
 import easyPrint from 'leaflet-easyprint'
 import "leaflet.browser.print/dist/leaflet.browser.print.js";
+
 import { data } from '../data/data';
 import "../CSS/Map.css";
 import CSV from "../CSV/CSV"
 import InheritMap from './InheritMap';
 
-const Map = ({base, index, clickCount, nameAndMapArr, toGeoJsonArr, geoJsonArr}) => {
+
+const Map = ({base, index, clickCount, nameAndMapArr, toGeoJsonArr, geoJsonArr, heatLayerValue}) => {
 
 // Map state:
 
@@ -26,12 +28,14 @@ const Map = ({base, index, clickCount, nameAndMapArr, toGeoJsonArr, geoJsonArr})
     mapRef.current = L.map('map', mapParams);
     //L.control.browserPrint().addTo(map.current);
     setMap(mapRef.current);
+    // let heatMapper = L.heatLayer()
+    // console.log(heatMapper)
   }, []);
 
 
   return (
     <>
-      <InheritMap map={map} base={base} index={index} clickCount={clickCount} nameAndMapArr ={nameAndMapArr} toGeoJsonArr={toGeoJsonArr} geoJsonArr={geoJsonArr}/>
+      <InheritMap map={map} base={base} index={index} clickCount={clickCount} nameAndMapArr ={nameAndMapArr} toGeoJsonArr={toGeoJsonArr}  geoJsonArr={geoJsonArr} heatLayerValue={heatLayerValue} />
     </>
   );
 };
