@@ -4,7 +4,7 @@ import Map from "../Mapping/Map";
 import PointDensity from "../tools/PointDensity";
 import Section from "./Section";
 
-function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
+function SideBar({renderer, nameAndMapArr, toGeoJsonArr, geoJsonObj}) {
   const[base, setBase] = useState('1');
   const [index, setIndex] = useState(null);
   const [clickCount, setClickCount] = useState(0);
@@ -35,51 +35,81 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
   };
 
 //---------------------------------------------------------------------------------------------------------------------------------
-//  Right Click Event
+  //Right Click Event
 //---------------------------------------------------------------------------------------------------------------------------------
 
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [show, setShow] = useState(false);
-  const [renderPointDensity, setRenderPointDensity] = useState(false);
-  console.log(renderPointDensity)
-  const [renderCluster, setRenderCluster] = useState(false);
   
-
   const handleClick = (e) => {
     e.preventDefault()
-    console.log(e.type)
     if (e.type === "contextmenu") {
-      console.log(e)
+      //console.log(e)
       setAnchorPoint({ x: e.pageX, y: e.pageY });
       setShow(!show)
+      //console.log(e.target.children[0].value)
+      setClusterIndex(e.target.children[0].value)
     }
   };
-  const initiatePointDensity=() =>{
+//---------------------------------------------------------------------------------------------------------------------------------
+  //POINT DENSITY
+//---------------------------------------------------------------------------------------------------------------------------------
+
+  const [renderPointDensity, setRenderPointDensity] = useState(false);
+  const initiatePointDensity=()=>{
     console.log("Point Density")
     setShow(!show)
     setRenderPointDensity(!renderPointDensity)
     setRenderCluster(false)
   }
-  const initiateCluster=() =>{
+//---------------------------------------------------------------------------------------------------------------------------------
+  //CLUSTER
+//---------------------------------------------------------------------------------------------------------------------------------
+  const [clusterValue, setClusterValue] = useState(80)
+  const [renderCluster, setRenderCluster] = useState(false);
+  const [clusterIndex, setClusterIndex] = useState(null)
+  const [geoJsonCluster, setGeoJsonCluster] = useState(null)
+
+  const initiateCluster=(e) =>{
     console.log("Point Density")
     setShow(!show)
     setRenderPointDensity(false)
     setRenderCluster(!renderCluster)
   }
-  const initiateSymbology=()=>{
+
+
+    // useEffect(() => {
+  //   console.log(geoJsonObj)
+  // //   setGeoJsonCluster(L.geoJSON(geoJsonObj, {
+  // //     pointToLayer: function(feature, latlng){
+  // //       return makers.addLayer(L.circleMarker(latlng))
+  // //     }
+  // //   }))
+  // },[geoJsonObj[features].length])
+  
+  const onClusterChange = (e) => {
+    setClusterValue(e.target.value)
+  }
+
+//---------------------------------------------------------------------------------------------------------------------------------
+  //SYMBOLOGY
+//---------------------------------------------------------------------------------------------------------------------------------
+const initiateSymbology=()=>{
     setShow(!show)
   }
+ //---------------------------------------------------------------------------------------------------------------------------------
+  //INITIATE HOVER
+//---------------------------------------------------------------------------------------------------------------------------------
+
   const initiateHover=()=>{
     setShow(!show)
   }
+  
   const [heatLayerValue, setHeatLayerValue] = useState(0)
-  const [clusterValue, setClusterValue] = useState(80)
+
   const onHeatRadiusChange = (e) => {
       setHeatLayerValue(e.target.value)
   }
-  const onClusterChange = (e) => {
-    setClusterValue(e.target.value)
-}
 
   if(!renderer){
     return (
@@ -181,9 +211,9 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
           </nav>
         </div>
         <div className="child">
-        <Map base={base} index = {index} clickCount = {clickCount} nameAndMapArr={nameAndMapArr} geoJsonArr={geoJsonArr} heatLayerValue={heatLayerValue}/>
+        <Map base={base} index = {index} clickCount = {clickCount} nameAndMapArr={nameAndMapArr} geoJsonArr={geoJsonArr} heatLayerValue={heatLayerValue} renderCluster={renderCluster} clusterValue={clusterValue} clusterIndex={clusterIndex} geoJsonObj={geoJsonObj}/>
         {renderPointDensity ? (
-                <div className="toolbox">
+              <div className="toolbox">
                   <table>
                     <h5>Heat Analysis</h5>
                       <tr>
@@ -194,22 +224,21 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr}) {
                   </table>
               </div>
         ):<></>}
-                {renderCluster ? (
+        {renderCluster ? (
                 <div className="toolbox">
                   <table>
                       <tr>
                       <h5>Cluster Control</h5>
                       </tr>
-                      <tr>
-                          <td><label for="radius">radius:</label></td>
-                          <td><input onChange={onClusterChange} id="radius" type="range" min="0" max="200" value={clusterValue}/></td>
-                          <td><span id="radiusOut"></span> {heatLayerValue} x</td>
-                      </tr>
+                        <tr>
+                            <td><label for="radius">radius:</label></td>
+                            <td><input onChange={onClusterChange} id="radius" type="range" min="0" max="200" value={clusterValue}/></td>
+                            <td><span id="radiusOut"></span> {clusterValue} x</td>
+                        </tr>
                   </table>
-              </div>
+                </div>
         ):<></>}
         </div>
-
       </>
     );
   }

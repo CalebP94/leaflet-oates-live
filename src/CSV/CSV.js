@@ -3,8 +3,6 @@ import "./CSV.css"
 import SideBar from "../Panels/SideBar";
 import Table from "./Table";
 import "../CSS/Map.css";
-import Cluster from "../tools/Cluster";
-import PointDensity from "../tools/PointDensity";
 
 export default function CSV({mapLayer, pointsRef}) {
 /*
@@ -16,6 +14,7 @@ Beginning of CSV Portion
 */
   const [file, setFile] = useState();
   const [array, setArray] = useState([]);
+
   const [displayTable, setDisplayTable] = useState(false);
   const fileReader = new FileReader();
   const handleOnChange = (e) => {
@@ -68,14 +67,16 @@ Beginning of Toggling Portion
 /*
 Comitted Out becuase redoing the geoJson for L.geoJson()
 */
-  const nameAndMapObject = {
+  
+const nameAndMapObject = {
     layerName:"",
     mapped:false,
   };
 /*
 Comitted Out becuase redoing the geoJson for L.geoJson()
 */
-  const geoJSONState = {
+ 
+const geoJSONState = {
     type: "FeatureCollection",
     features: []
   };
@@ -84,7 +85,6 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
   const [renderer, setRenderer] = useState(false);
   const [geoJsonObj, setGeoJsonObj] = useState({...geoJSONState});
   const [toGeoJsonArr, setToGeoJsonArr] = useState(null);
-  
   const [nameAndMap, setNameAndMap] = useState({...nameAndMapObject});
   const [nameAndMapArr, setNameAndMapArr] = useState([]);
   const [featuresArr, setFeaturesArr] = useState([]);
@@ -98,6 +98,7 @@ Comitted Out becuase redoing the geoJson for L.geoJson()
     } 
 
     let toGeoJson = array.map((i) => {
+
       let lat = i[Object.keys(i)[Object.keys(i).length-1]]
       let lon = i[Object.keys(i)[Object.keys(i).length-2]]
       if(lat){ 
@@ -170,13 +171,10 @@ End of Toggling Portion
 */
     return (
       <>
-        <SideBar  renderer={renderer} nameAndMapArr={nameAndMapArr} toGeoJsonArr={toGeoJsonArr}/>
+        <SideBar  renderer={renderer} nameAndMapArr={nameAndMapArr} toGeoJsonArr={toGeoJsonArr} geoJsonObj={geoJsonObj}/>
           <div className="csv">
               <label htmlFor="csvFileInput" className="custom-file-upload">
                 <i className="fa fa-cloud-upload"></i>
-                <div id="loadCSV">
-                  Upload CSV
-                </div>
               </label>
                 <input
                     type={"file"}

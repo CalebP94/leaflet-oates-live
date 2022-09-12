@@ -2,12 +2,18 @@ import React, { useEffect, useRef, useState } from 'react';
 import L, { point } from 'leaflet';
 import "leaflet.browser.print/dist/leaflet.browser.print.js";
 import "leaflet.markercluster/dist/leaflet.markercluster";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
-export default function InheritMap({map, base, index, clickCount, nameAndMapArr, geoJsonArr, heatLayerValue}){
+export default function InheritMap({map, base, index, clickCount, nameAndMapArr, geoJsonArr, heatLayerValue, markers, renderCluster, clusterIndex,geoJsonObj,clusterValue}){
+
+    //console.log(renderCluster)
+    console.log(map)
 
     const [changerMap, setChangerMap] = useState(null);
     const tileRef = useRef(null);
     const intBase = parseInt(base);
+    const [pointLayerKey, setPointLayerKey] = useState(null)
     useEffect(() => {
         async function mapAwait(){
             let mapper = await map
@@ -67,11 +73,11 @@ export default function InheritMap({map, base, index, clickCount, nameAndMapArr,
     //   }, [toGeoJson])
 
 //GeoJSON Reading
+
     useEffect(()=>{
         if(index){
             let pointsToAdd = geoJsonArr[index]
             if(nameAndMapArr[index].mapped){
-                // pointsToAdd.bindPopup("help")
                 map.addLayer(pointsToAdd)
             }
             else if(!nameAndMapArr[index].mapped){
@@ -79,149 +85,46 @@ export default function InheritMap({map, base, index, clickCount, nameAndMapArr,
             }
         }
     },[clickCount])
-// useEffect(() => {
 
-  
-  //   // console.log(pointsRef)
-  //   // console.log(mapLayer)
-  //   if(mapLayer){
-  //     pointsRef.current = L.geoJSON(data)
-  //     map.addLayer(pointsRef.current)
-  //   }
-  //   else if(!mapLayer && pointsRef.current){
-  //     map.removeLayer(pointsRef.current)
-  //   }
-  // },[pointLayerArr])
 
-  // useEffect(() => {
+
+    useEffect(() => {
+
+        if(clusterIndex){
+            let clusterToAdd = geoJsonArr[clusterIndex]
+            if(renderCluster){                
+                markers.addLayer(clusterToAdd)
+                map.addLayer(markers)
+            }
+            else{
+                // markers.removeLayer(clusterToAdd)
+
+                map.removeLayer(markers)
+            }
+        }
+        
+        //console.log(geoJsonArr[clusterIndex])
+        // L.geoJSON(geoJsonObj, {
+        //   pointToLayer: function(feature, latlng){
+        //     console.log(feature, latlng)
+        //     return markers.addLayer(L.circleMarker(latlng, geoJsonMarker))
+        //     //console.log(feature, latlng)
+        //   }
+        // })
+      },[renderCluster,clusterIndex])
+
+//   useEffect(()=>{
     
-  //   console.log(points)
-  // },[mapLayer])
+//     if(renderCluster && markers){
+//         let clusterToAdd = geoJsonArr[clusterIndex]
+//         //console.log(clusterToAdd)
+//     }
+//     if(markers && !renderCluster){
+//         //console.log("REMOVE", markers)
+//     }
+//   },[renderCluster])
 
-  // console.log(map._handlers);
-  // // let backgroundStreets = L.tileLayer(`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`)
-  // // let topo = L.tileLayer("https://api.maptiler.com/maps/topo/{z}/{x}/{y}.png?key=syDzGMyNxJqfudLD0yI7")
-  // // tileRef.current = L.tileLayer(
-  // //   `https://api.maptiler.com/maps/topo/{z}/{x}/{y}.png?key=syDzGMyNxJqfudLD0yI7`
-  // //   // {
-  // //   //   attribution:
-  // //   //     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  // //   // }
-  // // );
-  // useEffect(() => {
-  //   async function Baser(){
-  //   const abortController = new AbortController();
-  //   try{
-  //     const num = base;
-  //     if (!map && !num){
-  //       tileRef.current = await L.tileLayer(`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`, 
-  //       {signal: abortController.signal});
-  //       // //console.log(tileRef.current);
-  //       // console.log(map)
-  //       // map.addLayer(tileRef.current);
-  //     }
-  //     else if(intBase===1){
-  //       // Set map instance to state:
-  //       tileRef.current = await L.tileLayer(`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`, 
-  //                                           {signal: abortController.signal});
-  //       // //console.log(tileRef.current);
-  //       // console.log(map)
-  //       // map.addLayer(tileRef.current);
-  //     }
-  //     // else if(intBase===2){
-  //     //   map.removeLayer(tileRef.current)
-  //     //   console.log(map)
-  //     //   //lcontrol.removeLayer(backgroundStreets)
-  //     //   //map.removeLayer(backgroundStreets);
-  //     // }
-  //     // if (map && !base || base==1) {
-  //     //   //Add the base layer to the control:
-  //     //   layerControlRef.current = L.control
-  //     //     .layers({
-  //     //       OpenStreetMap: tileRef.current,
-  //     //     })
-  //     //     .addTo(map);
-  
-  //     //   //
-  //     //   //Add zoomControl:
-  //     //   zoomControlRef.current = L.control
-  //     //     .zoom({
-  //     //       position: 'topright',
-  //     //     })
-  //     //     .addTo(map);
-  
-  //     //   setLayerControl(layerControlRef.current);
-  //     //   setZoomControl(zoomControlRef.current);
-  //     //}
-  //   } catch(error){
-  //     console.log(error.name)
-  //     console.log(error)
-  //   }
-  //   }
-  //   Baser();
-  //   return () => {
-  //     abortController.abort(); // Cancels any pending request or response
-  //   };
-  
-  // }, [base]);
-  // // // Map events:
-  // useEffect(() => {
-  //   if(map){
-  //     console.log(tileRef.current);
-  //   }
-  // }, [tileRef])
-
-  // useEffect(() => {
-  //   if (!map) return;
-  //   if (map) {
-  //     map.on('zoomstart', () => {
-  //       console.log('ZOOM STARTED');
-  //       console.log(map.getZoom());
-  //     });
-  //   }
-  // }, [tileRef]);
-
-  // Create the layerGroup:
-  
-  // useEffect(() => {
-  //   if (!map) return;
-  //   if (map) {
-  //     if (layerControl) {
-  //       circleLayerRef.current = L.layerGroup().addTo(map);
-  //       setCircleLayer(circleLayerRef.current);
-  //     }
-  //   }
-  // }, [map, layerControl]);
-
-  // // Add circle layer to the layer control:
-  // useEffect(() => {
-  //   if (!map) return;
-  //   if (map) {
-  //     if (layerControl && circleLayer) {
-  //       layerControl.addOverlay(circleLayer, 'Circles');
-  //     }
-  //   }
-  // }, [map, layerControl, circleLayer]);
-
-  // // Add the city circles to the map:
-  // useEffect(() => {
-  //   if (!map) return;
-  //   if (map) {
-  //     if (circleLayer) {
-  //       circleLayer.clearLayers();
-  //       Array.from(cityData).forEach((city) => {
-  //         L.circle(city.latLng, { radius: 100000 }).addTo(circleLayer);
-  //       });
-  //     }
-  //   }
-  // }, [map, cityData, circleLayer]);
-
-  // return (
-  //   <>
-  //     <CSV mapLayer={mapLayer} pointsRef={pointsRef}/>
-  //   </>
-  // );
-    useEffect(() =>{
+  useEffect(() =>{
         if(heatLayerValue){
             let heatLayerGeo = geoJsonArr[index]
         }
