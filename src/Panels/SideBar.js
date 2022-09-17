@@ -3,6 +3,7 @@ import "../CSS/Layout.css"
 import Map from "../Mapping/Map";
 import PointDensity from "../tools/PointDensity";
 import Section from "./Section";
+import DisplayIcons from "../img/DisplayIcons"
 
 function SideBar({renderer, nameAndMapArr, toGeoJsonArr, geoJsonObj}) {
   const[base, setBase] = useState('1');
@@ -13,7 +14,8 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr, geoJsonObj}) {
 //---------------------------------------------------------------------------------------------------------------------------------
   //GeoJson Array Creation
 //---------------------------------------------------------------------------------------------------------------------------------
- useEffect(()=>{
+ 
+useEffect(()=>{
   if(toGeoJsonArr){
     setGeoJsonArr(current => [...current, toGeoJsonArr])
   }
@@ -51,6 +53,7 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr, geoJsonObj}) {
       setClusterIndex(e.target.children[0].value)
     }
   };
+  
 //---------------------------------------------------------------------------------------------------------------------------------
   //POINT DENSITY
 //---------------------------------------------------------------------------------------------------------------------------------
@@ -61,10 +64,13 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr, geoJsonObj}) {
     setShow(!show)
     setRenderPointDensity(!renderPointDensity)
     setRenderCluster(false)
+    setRenderSymbology(false)
   }
+
 //---------------------------------------------------------------------------------------------------------------------------------
   //CLUSTER
 //---------------------------------------------------------------------------------------------------------------------------------
+  
   const [clusterValue, setClusterValue] = useState(80)
   const [renderCluster, setRenderCluster] = useState(false);
   const [clusterIndex, setClusterIndex] = useState(null)
@@ -75,18 +81,9 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr, geoJsonObj}) {
     setShow(!show)
     setRenderPointDensity(false)
     setRenderCluster(!renderCluster)
+    setRenderSymbology(false)
   }
 
-
-    // useEffect(() => {
-  //   console.log(geoJsonObj)
-  // //   setGeoJsonCluster(L.geoJSON(geoJsonObj, {
-  // //     pointToLayer: function(feature, latlng){
-  // //       return makers.addLayer(L.circleMarker(latlng))
-  // //     }
-  // //   }))
-  // },[geoJsonObj[features].length])
-  
   const onClusterChange = (e) => {
     setClusterValue(e.target.value)
   }
@@ -94,23 +91,43 @@ function SideBar({renderer, nameAndMapArr, toGeoJsonArr, geoJsonObj}) {
 //---------------------------------------------------------------------------------------------------------------------------------
   //SYMBOLOGY
 //---------------------------------------------------------------------------------------------------------------------------------
-const initiateSymbology=()=>{
-    setShow(!show)
-  }
- //---------------------------------------------------------------------------------------------------------------------------------
+
+  const [renderSymbology, setRenderSymbology] = useState(false)
+  const [symbologyObject, setSymbologyObject] = useState({})
+  const [symbologyArr, setSymbologyArr] = useState([])
+
+  const initiateSymbology=()=>{
+      setShow(!show)
+      setRenderCluster(false)
+      setRenderPointDensity(false)
+      setRenderSymbology(!renderSymbology)
+      console.log(renderSymbology)
+    }
+
+  useEffect(()=>{
+    function importAll(r) {
+      let images = {};
+      r.keys().forEach((item, index) => { images[item.replace('./', '')] = r(item); });
+      return images
+    }
+    const images = importAll(require.context('../img/leafletPinsIcons', true, /\.(png|jpe?g|svg)$/))
+    setSymbologyObject(images)
+    setSymbologyArr(Object.keys(images))
+    
+  },[])
+
+ //--------------------------------------------------------------------------------------------------------------------------------
+ //
   //INITIATE HOVER
 //---------------------------------------------------------------------------------------------------------------------------------
 
   const initiateHover=()=>{
     setShow(!show)
   }
-  
   const [heatLayerValue, setHeatLayerValue] = useState(0)
-
   const onHeatRadiusChange = (e) => {
       setHeatLayerValue(e.target.value)
   }
-
   if(!renderer){
     return (
       <>
@@ -207,7 +224,7 @@ const initiateSymbology=()=>{
                 
                 <br/><br/>
                 </Section>
-          </div>
+            </div>
           </nav>
         </div>
         <div className="child">
@@ -225,18 +242,23 @@ const initiateSymbology=()=>{
               </div>
         ):<></>}
         {renderCluster ? (
-                <div className="toolbox">
-                  <table>
+              <div className="toolbox">
+                <table>
                       <tr>
-                      <h5>Cluster Control</h5>
+                        <h5>Cluster Control</h5>
                       </tr>
-                        <tr>
-                            <td><label for="radius">radius:</label></td>
-                            <td><input onChange={onClusterChange} id="radius" type="range" min="0" max="200" value={clusterValue}/></td>
-                            <td><span id="radiusOut"></span> {clusterValue} x</td>
-                        </tr>
-                  </table>
-                </div>
+                      <tr>
+                          <td><label for="radius">radius:</label></td>
+                          <td><input onChange={onClusterChange} id="radius" type="range" min="0" max="200" value={clusterValue}/></td>
+                          <td><span id="radiusOut"></span> {clusterValue} x</td>
+                      </tr>
+                </table>
+              </div>
+        ):<></>}
+        {renderSymbology ? (   
+          <div className="toolbox">   
+            <DisplayIcons symbologyImages={symbologyObject} symbologyArr={symbologyArr}/>
+          </div>
         ):<></>}
         </div>
       </>

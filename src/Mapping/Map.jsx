@@ -13,19 +13,13 @@ import InheritMap from './InheritMap';
 
 const Map = ({base, index, clickCount, nameAndMapArr, toGeoJsonArr, geoJsonArr, heatLayerValue, renderCluster, clusterValue, clusterIndex, geoJsonObj}) => {
 
-  //console.log(geoJsonObj)
-
 // Map state:
   const [map, setMap] = useState(null);
   const mapRef = useRef(null);
   const [markers, setMarkers] = useState(null)
   //console.log(markers)
   const [geoJsonCluster, setGeoJsonCluster] = useState(null)
-  //console.log(geoJsonCluster)
-  // const[featureLength, setFeatureLength0] = useState()
-  // let featureLength=geoJsonObj['features'].length
-  //console.log(geoJsonCluster)
-  //console.log(markers, renderCluster)
+
   const mapParams = {
     center: [51.5072, 0.1276], // USA
     zoom: 8,
@@ -46,7 +40,7 @@ const Map = ({base, index, clickCount, nameAndMapArr, toGeoJsonArr, geoJsonArr, 
       spiderfyOnMaxZoom:true,
       maxClusterRadius:clusterValue
     }))
-  }, [map, clusterValue, renderCluster])
+  }, [ clusterValue, renderCluster])
 
   const geoJsonMarker = {
     radius:8,
@@ -56,18 +50,6 @@ const Map = ({base, index, clickCount, nameAndMapArr, toGeoJsonArr, geoJsonArr, 
     opacity:1,
     fillOpacity: 0.8
 }
-
-  // useEffect(() => {
-  //   console.log("TEST")
-  //   // L.geoJSON(geoJsonObj, {
-  //   //   pointToLayer: function(feature, latlng){
-  //   //     console.log(feature, latlng)
-  //   //     return markers.addLayer(L.circleMarker(latlng, geoJsonMarker))
-  //   //     //console.log(feature, latlng)
-  //   //   }
-  //   // })
-  // },[renderCluster,renderCluster, clusterValue])
-
 
 
   return (

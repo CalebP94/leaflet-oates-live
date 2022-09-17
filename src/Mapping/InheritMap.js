@@ -7,9 +7,6 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 export default function InheritMap({map, base, index, clickCount, nameAndMapArr, geoJsonArr, heatLayerValue, markers, renderCluster, clusterIndex,geoJsonObj,clusterValue}){
 
-    //console.log(renderCluster)
-    console.log(map)
-
     const [changerMap, setChangerMap] = useState(null);
     const tileRef = useRef(null);
     const intBase = parseInt(base);
@@ -56,22 +53,6 @@ export default function InheritMap({map, base, index, clickCount, nameAndMapArr,
         }
     },[base])
 
-    // useEffect(() => {
-    //     function geoJsonSet(){
-    //       if(clickCount){
-    //         setToGeoJson(L.geoJSON(pointLayerArr[index]))
-    //       }
-    //     }
-    //     geoJsonSet();
-    //   },[index])
-    
-    //   useEffect(()=> {
-    //     //console.log(toGeoJson)
-    //     if(toGeoJson){
-    //       setGeoJsonArr(current => [...current, toGeoJson])
-    //     }
-    //   }, [toGeoJson])
-
 //GeoJSON Reading
 
     useEffect(()=>{
@@ -85,8 +66,6 @@ export default function InheritMap({map, base, index, clickCount, nameAndMapArr,
             }
         }
     },[clickCount])
-
-
 
     useEffect(() => {
 
@@ -102,36 +81,17 @@ export default function InheritMap({map, base, index, clickCount, nameAndMapArr,
                 map.removeLayer(markers)
             }
         }
-        
-        //console.log(geoJsonArr[clusterIndex])
-        // L.geoJSON(geoJsonObj, {
-        //   pointToLayer: function(feature, latlng){
-        //     console.log(feature, latlng)
-        //     return markers.addLayer(L.circleMarker(latlng, geoJsonMarker))
-        //     //console.log(feature, latlng)
-        //   }
-        // })
       },[renderCluster,clusterIndex])
-
-//   useEffect(()=>{
-    
-//     if(renderCluster && markers){
-//         let clusterToAdd = geoJsonArr[clusterIndex]
-//         //console.log(clusterToAdd)
-//     }
-//     if(markers && !renderCluster){
-//         //console.log("REMOVE", markers)
-//     }
-//   },[renderCluster])
 
   useEffect(() =>{
         if(heatLayerValue){
             let heatLayerGeo = geoJsonArr[index]
         }
     },[heatLayerValue])
-return(
-    <>
-        <div id="map"/>
-    </>
-)
+
+    return(
+        <>
+            <div id="map"/>
+        </>
+    )
 }
