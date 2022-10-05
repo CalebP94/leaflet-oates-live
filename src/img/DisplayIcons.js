@@ -11,7 +11,6 @@ export default function DisplayIcons({symbologyImages, symbologyArr}){
 
         return (
             <>
-
                 <table>
                     <thead>
                     <tr>
@@ -39,8 +38,6 @@ export default function DisplayIcons({symbologyImages, symbologyArr}){
                         </tr>
                     </tbody>
                 </table>
-                
-    
             </>
         )
 

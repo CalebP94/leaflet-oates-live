@@ -3,6 +3,7 @@ import "./CSV.css"
 import SideBar from "../Panels/SideBar";
 import Table from "./Table";
 import "../CSS/Map.css";
+import L, { point } from 'leaflet';
 
 export default function CSV({mapLayer, pointsRef}) {
 /*
@@ -17,9 +18,11 @@ Beginning of CSV Portion
 
   const [displayTable, setDisplayTable] = useState(false);
   const fileReader = new FileReader();
+
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
+
   const setTruthy = (e) =>{
     setDisplayTable(!displayTable)
   };
@@ -38,7 +41,8 @@ Beginning of CSV Portion
     setArray(array);
   };
     
-    //when input, or file change handler ^^^ changes, the csvFileToArray runs and sets an array
+  //when input, or file change handler ^^^ changes, the csvFileToArray runs and sets an array
+
   useEffect(() => {
     if (file) {
       fileReader.onload = function (event) {
@@ -82,9 +86,10 @@ const geoJSONState = {
   };
 
   const [pointLayerArr, setPointLayerArr] = useState([]);
-  const [renderer, setRenderer] = useState(false);
+  // const [renderer, setRenderer] = useState(false);
   const [geoJsonObj, setGeoJsonObj] = useState({...geoJSONState});
-  const [toGeoJsonArr, setToGeoJsonArr] = useState(null);
+  //const [toGeoJsonArr, setToGeoJsonArr] = useState(null);
+  //console.log(toGeoJsonArr)
   const [nameAndMap, setNameAndMap] = useState({...nameAndMapObject});
   const [nameAndMapArr, setNameAndMapArr] = useState([]);
   const [featuresArr, setFeaturesArr] = useState([]);
@@ -93,7 +98,6 @@ const geoJSONState = {
     if(file){
       let name = file.name.split(".")[0]
       nameAndMapObject.layerName = name;
-      //setGeoJson(geoJSONState)
       setNameAndMap(nameAndMapObject)
     } 
 
@@ -131,30 +135,60 @@ const geoJSONState = {
     setGeoJsonObj(geoJsonObj)
   },[featuresArr]);
 
+
+  // useEffect(()=>{
+  //   var geojsonMarkerOptions3 = {
+  //     radius: 5,
+  //     fillColor: "#33ccff",
+  //     color: "#000",
+  //     weight: 1,
+  //     opacity: 1,
+  //     fillOpacity: 0.9
+  //   };
+  //   setTimeout(() => {
+  //     if(nameAndMap.layerName != ''){
+  //       setNameAndMapArr(current => [...current, nameAndMap])
+  //       setToGeoJsonArr(L.geoJSON(geoJsonObj, {
+  //         pointToLayer: function(feature, latlng) {
+  //           return new L.CircleMarker(latlng, geojsonMarkerOptions3);
+  //         },
+  //         onEachFeature: function(feature, layer){
+  //           let formatPopup = (object) =>{
+  //             let out = [];
+  //               for(let objVal in object){
+  //                 let string = objVal +': '+object[objVal]
+  //                 out.push(string)
+  //               }
+  //               return out.join('<br>');
+  //           }
+  //           let callout = formatPopup(feature.properties)
+  //           layer.bindPopup('<p>'+callout+'</p>')
+  //         },
+
+  //       }))
+  //     }
+  //   }, 500);
+  //   setRenderer(true)
+  // },[nameAndMap])
+
+
   useEffect(()=>{
+    var geojsonMarkerOptions3 = {
+      radius: 5,
+      fillColor: "#33ccff",
+      color: "#000",
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.9
+    };
     setTimeout(() => {
       if(nameAndMap.layerName != ''){
         setNameAndMapArr(current => [...current, nameAndMap])
-        setToGeoJsonArr(L.geoJSON(geoJsonObj, {
-          onEachFeature: function(feature, layer){
-            let formatPopup = (object) =>{
-              let out = [];
-                for(let objVal in object){
-                  let string = objVal +': '+object[objVal]
-                  out.push(string)
-                }
-                return out.join('<br>');
-            }
-            let callout = formatPopup(feature.properties)
-            layer.bindPopup('<p>'+callout+'</p>')
-          }
-        }))
+        // setToGeoJsonArr(L.geoJSON(geoJsonObj))
       }
     }, 500);
-    setRenderer(true)
+    // setRenderer(true)
   },[nameAndMap])
-
-
 
   // useEffect(() => {
   //   //let name = geoJson.layerName;
@@ -171,7 +205,7 @@ End of Toggling Portion
 */
     return (
       <>
-        <SideBar  renderer={renderer} nameAndMapArr={nameAndMapArr} toGeoJsonArr={toGeoJsonArr} geoJsonObj={geoJsonObj}/>
+        <SideBar nameAndMapArr={nameAndMapArr} geoJsonObj={geoJsonObj} nameAndMap={nameAndMap}/>
           <div className="csv">
               <label htmlFor="csvFileInput" className="custom-file-upload">
                 <i className="fa fa-cloud-upload"></i>

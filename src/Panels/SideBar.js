@@ -5,11 +5,91 @@ import PointDensity from "../tools/PointDensity";
 import Section from "./Section";
 import DisplayIcons from "../img/DisplayIcons"
 
-function SideBar({renderer, nameAndMapArr, toGeoJsonArr, geoJsonObj}) {
+function SideBar({nameAndMapArr, geoJsonObj, nameAndMap}) {
+
+//---------------------------------------------------------------------------------------------------------------------------------
+  //STATE MANAGEMENT
+//---------------------------------------------------------------------------------------------------------------------------------
+
+  //RENDERING
   const[base, setBase] = useState('1');
   const [index, setIndex] = useState(null);
   const [clickCount, setClickCount] = useState(0);
+  const [renderer, setRenderer] = useState(false);
+
+  //GEOJSON
+  const [toGeoJsonArr, setToGeoJsonArr] = useState(null);
   const [geoJsonArr, setGeoJsonArr] = useState([]);
+
+  //SYMBOLOGY
+  const [renderSymbology, setRenderSymbology] = useState(false)
+  const [symbologyObject, setSymbologyObject] = useState({})
+  const [symbologyArr, setSymbologyArr] = useState([])
+  const [clickedImage, setClickedImaged] = useState(null)
+
+  // useEffect(() => {
+  //   //console.log(geoJsonObj)
+  // },[geoJsonObj.features])
+
+   useEffect(()=>{
+    //console.log(clickedImage)
+    var geojsonMarkerOptions3 = {
+      radius: 5,
+      fillColor: "#33ccff",
+      color: "#000",
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0.9
+    };
+    setTimeout(() => {
+      if(nameAndMap.layerName != ''){
+        //setNameAndMapArr(current => [...current, nameAndMap])
+        setToGeoJsonArr(L.geoJSON(geoJsonObj, {
+          pointToLayer: function(feature, latlng) {
+            if(!clickedImage){
+              return new L.CircleMarker(latlng, geojsonMarkerOptions3);
+            }
+          },
+          onEachFeature: function(feature, layer){
+            let formatPopup = (object) =>{
+              let out = [];
+                for(let objVal in object){
+                  let string = objVal +': '+object[objVal]
+                  out.push(string)
+                }
+                return out.join('<br>');
+            }
+            let callout = formatPopup(feature.properties)
+            layer.bindPopup('<p>'+callout+'</p>')
+          },
+
+        }))
+      }
+    }, 500);
+    setRenderer(true)
+  },[geoJsonObj.features, clickedImage])
+
+  // const [geoJsonOptions, setGeoJsonOptions] = useState(
+  //   {
+  //     pointToLayer: function(feature, latlng) {
+  //       return new L.CircleMarker(latlng, geojsonMarkerOptions3);
+  //     },
+  //     onEachFeature: function(feature, layer){
+  //       let formatPopup = (object) =>{
+  //         let out = [];
+  //           for(let objVal in object){
+  //             let string = objVal +': '+object[objVal]
+  //             out.push(string)
+  //           }
+  //           return out.join('<br>');
+  //       }
+  //       let callout = formatPopup(feature.properties)
+  //       layer.bindPopup('<p>'+callout+'</p>')
+  //     }})
+  //console.log(geoJsonOptions);
+
+
+  
 
 //---------------------------------------------------------------------------------------------------------------------------------
   //GeoJson Array Creation
@@ -19,11 +99,13 @@ useEffect(()=>{
   if(toGeoJsonArr){
     setGeoJsonArr(current => [...current, toGeoJsonArr])
   }
- },[toGeoJsonArr])
+},[toGeoJsonArr])
+
   const handleChange = (e) => {
     const valueI = e.target.value
     setBase(preVal => valueI)
   };
+
   const pointChange = (e) => {
     let indexSearch = e.target.value;
     setIndex(indexSearch)
@@ -46,11 +128,9 @@ useEffect(()=>{
   const handleClick = (e) => {
     e.preventDefault()
     if (e.type === "contextmenu") {
-      //console.log(e)
       setAnchorPoint({ x: e.pageX, y: e.pageY });
       setShow(!show)
-      //console.log(e.target.children[0].value)
-      setClusterIndex(e.target.children[0].value)
+      
     }
   };
   
@@ -74,14 +154,18 @@ useEffect(()=>{
   const [clusterValue, setClusterValue] = useState(80)
   const [renderCluster, setRenderCluster] = useState(false);
   const [clusterIndex, setClusterIndex] = useState(null)
+  console.log(clusterIndex)
   const [geoJsonCluster, setGeoJsonCluster] = useState(null)
 
   const initiateCluster=(e) =>{
-    console.log("Point Density")
     setShow(!show)
     setRenderPointDensity(false)
     setRenderCluster(!renderCluster)
     setRenderSymbology(false)
+    if(nameAndMapArr[indexSearch].mapped){
+      nameAndMapArr[indexSearch].mapped = false
+    }
+    setClusterIndex(e.target.value)
   }
 
   const onClusterChange = (e) => {
@@ -92,16 +176,13 @@ useEffect(()=>{
   //SYMBOLOGY
 //---------------------------------------------------------------------------------------------------------------------------------
 
-  const [renderSymbology, setRenderSymbology] = useState(false)
-  const [symbologyObject, setSymbologyObject] = useState({})
-  const [symbologyArr, setSymbologyArr] = useState([])
+
 
   const initiateSymbology=()=>{
       setShow(!show)
       setRenderCluster(false)
       setRenderPointDensity(false)
       setRenderSymbology(!renderSymbology)
-      console.log(renderSymbology)
     }
 
   useEffect(()=>{
@@ -113,11 +194,25 @@ useEffect(()=>{
     const images = importAll(require.context('../img/leafletPinsIcons', true, /\.(png|jpe?g|svg)$/))
     setSymbologyObject(images)
     setSymbologyArr(Object.keys(images))
-    
   },[])
 
+//--------------------------------------------------------------------------------------------------------------------------------
+  // Image Setting
+//--------------------------------------------------------------------------------------------------------------------------------
+
+
+  //console.log(clickedImage)
+
+  const onImageClick = (e) => {
+    console.log(e.target.src)
+    let myIcon = L.icon({
+      iconUrl: e.target.src
+    })
+    setClickedImaged(myIcon)
+  }
+
  //--------------------------------------------------------------------------------------------------------------------------------
- //
+//
   //INITIATE HOVER
 //---------------------------------------------------------------------------------------------------------------------------------
 
@@ -197,9 +292,17 @@ useEffect(()=>{
                 <Section title="Layers" defaultExpanded="true">
                   {nameAndMapArr.map((i, index)=>
                   <div >
+                    {!renderCluster ?(
                     <label key={index} onContextMenu={handleClick}>
                       <input value={index} key={index} type="checkbox" onChange={pointChange} /> {i.layerName }
+                    </label>  
+                    ):(<>
+                    <label key={index} onContextMenu={handleClick}>
+                      <input value={index} key={index} type="checkbox" onChange={pointChange} disabled="disabled"/> {i.layerName }
                     </label>
+                    
+                    </>)}
+                    
                     {show ? (
                       <ul
                         className="menu"
@@ -228,7 +331,7 @@ useEffect(()=>{
           </nav>
         </div>
         <div className="child">
-        <Map base={base} index = {index} clickCount = {clickCount} nameAndMapArr={nameAndMapArr} geoJsonArr={geoJsonArr} heatLayerValue={heatLayerValue} renderCluster={renderCluster} clusterValue={clusterValue} clusterIndex={clusterIndex} geoJsonObj={geoJsonObj}/>
+        <Map base={base} index = {index} clickCount = {clickCount} nameAndMapArr={nameAndMapArr} geoJsonArr={geoJsonArr} heatLayerValue={heatLayerValue} renderCluster={renderCluster} clusterValue={clusterValue} clusterIndex={clusterIndex} geoJsonObj={geoJsonObj} clickedImage={clickedImage}/>
         {renderPointDensity ? (
               <div className="toolbox">
                   <table>
@@ -257,7 +360,33 @@ useEffect(()=>{
         ):<></>}
         {renderSymbology ? (   
           <div className="toolbox">   
-            <DisplayIcons symbologyImages={symbologyObject} symbologyArr={symbologyArr}/>
+                <table>
+                    <thead>
+                    <tr>
+                        <h5>Select Pin</h5>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                          <td><input type="image" src={symbologyObject['a.png']} onClick={onImageClick} /> </td>
+                          <td><input type="image" src={symbologyObject['b.png']} onClick={onImageClick} /> </td>
+                          <td><input type="image" src={symbologyObject['c.png']} onClick={onImageClick} /> </td>
+                        </tr>
+                        <tr>
+                          <td><input type="image" src={symbologyObject['d.png']} onClick={onImageClick} /> </td>
+                          <td><input type="image" src={symbologyObject['e.png']} onClick={onImageClick} /> </td>
+                          <td><input type="image" src={symbologyObject['f.png']} onClick={onImageClick} /> </td>
+                        </tr>
+                        <tr>
+                          <td><input type="image" src={symbologyObject['g.png']} onClick={onImageClick} /> </td>
+                          <td><input type="image" src={symbologyObject['h.png']} onClick={onImageClick} /> </td>
+                          <td><input type="image" src={symbologyObject['i.png']} onClick={onImageClick} /> </td>
+                        </tr>
+                        <tr>
+                          <td><input type="image" src={symbologyObject['j.png']} onClick={onImageClick}/> </td>
+                        </tr>
+                    </tbody>
+                </table>
           </div>
         ):<></>}
         </div>

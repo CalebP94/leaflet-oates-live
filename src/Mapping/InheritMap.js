@@ -5,7 +5,9 @@ import "leaflet.markercluster/dist/leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
-export default function InheritMap({map, base, index, clickCount, nameAndMapArr, geoJsonArr, heatLayerValue, markers, renderCluster, clusterIndex,geoJsonObj,clusterValue}){
+export default function InheritMap({map, base, index, clickCount, nameAndMapArr, geoJsonArr, heatLayerValue, markers, renderCluster, clusterIndex, clickedImage}){
+
+    console.log(clusterIndex, renderCluster, console.log(index))
 
     const [changerMap, setChangerMap] = useState(null);
     const tileRef = useRef(null);
@@ -37,19 +39,19 @@ export default function InheritMap({map, base, index, clickCount, nameAndMapArr,
             });
             //tileRef.current= L.tileLayer(``)
             map.addLayer(tileRef.current)
-            }
-            else if(map&&intBase===2){
-            map.removeLayer(tileRef.current);
-            tileRef.current = L.tileLayer("https://api.maptiler.com/maps/topo/{z}/{x}/{y}.png?key=syDzGMyNxJqfudLD0yI7",{
-                attribution: '\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e'
+        }
+        else if(map&&intBase===2){
+                map.removeLayer(tileRef.current);
+                tileRef.current = L.tileLayer("https://api.maptiler.com/maps/topo/{z}/{x}/{y}.png?key=syDzGMyNxJqfudLD0yI7",{
+                    attribution: '\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e'
             });
             // //tileRef.current= L.tileLayer(``)
             map.addLayer(tileRef.current)
-            }
-            else if (map && intBase===1){
-            map.removeLayer(tileRef.current);
-            tileRef.current = L.tileLayer(`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`)
-            map.addLayer(tileRef.current)
+        }
+        else if (map && intBase===1){
+                map.removeLayer(tileRef.current);
+                tileRef.current = L.tileLayer(`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`)
+                map.addLayer(tileRef.current)
         }
     },[base])
 
@@ -58,30 +60,72 @@ export default function InheritMap({map, base, index, clickCount, nameAndMapArr,
     useEffect(()=>{
         if(index){
             let pointsToAdd = geoJsonArr[index]
+            //console.log(pointsToAdd)
             if(nameAndMapArr[index].mapped){
+                console.log(pointsToAdd)
                 map.addLayer(pointsToAdd)
+                console.log(map)
             }
             else if(!nameAndMapArr[index].mapped){
                 map.removeLayer(pointsToAdd)
+                console.log(map)
             }
         }
-    },[clickCount])
+        // else if(clusterIndex && !index){
+        //     let clusterToAdd = geoJsonArr[clusterIndex]
+        //     let clusterID = geoJsonArr[clusterIndex]._leaflet_id
+        //     console.log(clusterID, clusterToAdd)
+        //     if(renderCluster){             
+        //         markers.addLayer(clusterToAdd)
+        //         map.addLayer(markers)
+        //         console.log(map)
+        //     }
+            // else if(!renderCluster){
+            //     console.log("REMOVE?")
+            //     map.eachLayer((layer)=>{
+            //         let obj = layer._eventParents
+
+            //         for(let i in obj){
+            //             if(i == clusterID){
+            //                 map.removeLayer(layer)
+            //             }
+            //             else{
+            //                 map.removeLayer(layer)
+            //             }
+            //         }
+            //     })
+            // }
+    //}
+    },[clickCount,clickedImage])
 
     useEffect(() => {
-
-        if(clusterIndex){
+        if(clusterIndex || clusterIndex === 0){
+            console.log(renderCluster, clusterIndex)
             let clusterToAdd = geoJsonArr[clusterIndex]
+            let clusterID = geoJsonArr[clusterIndex]._leaflet_id
+            console.log(clusterID, clusterToAdd)
             if(renderCluster){                
                 markers.addLayer(clusterToAdd)
                 map.addLayer(markers)
+                console.log(map)
             }
-            else{
-                // markers.removeLayer(clusterToAdd)
-
-                map.removeLayer(markers)
+            else if(!renderCluster){
+                console.log("REMOVE?")
+                map.eachLayer((layer)=>{
+                    let obj = layer._eventParents
+                    for(let i in obj){
+                        if(i == clusterID){
+                            map.removeLayer(layer)
+                        }
+                        else{
+                            map.removeLayer(layer)
+                        }
+                    }
+                })
+                //map.removeLayer(markers)
             }
         }
-      },[renderCluster,clusterIndex])
+    },[clusterIndex, renderCluster])
 
   useEffect(() =>{
         if(heatLayerValue){
@@ -89,7 +133,7 @@ export default function InheritMap({map, base, index, clickCount, nameAndMapArr,
         }
     },[heatLayerValue])
 
-    return(
+    return (
         <>
             <div id="map"/>
         </>

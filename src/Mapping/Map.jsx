@@ -11,13 +11,12 @@ import CSV from "../CSV/CSV"
 import InheritMap from './InheritMap';
 
 
-const Map = ({base, index, clickCount, nameAndMapArr, toGeoJsonArr, geoJsonArr, heatLayerValue, renderCluster, clusterValue, clusterIndex, geoJsonObj}) => {
+const Map = ({base, index, clickCount, nameAndMapArr, toGeoJsonArr, geoJsonArr, heatLayerValue, renderCluster, clusterValue, clusterIndex, geoJsonObj, clickedImage}) => {
 
 // Map state:
   const [map, setMap] = useState(null);
   const mapRef = useRef(null);
   const [markers, setMarkers] = useState(null)
-  //console.log(markers)
   const [geoJsonCluster, setGeoJsonCluster] = useState(null)
 
   const mapParams = {
@@ -40,21 +39,11 @@ const Map = ({base, index, clickCount, nameAndMapArr, toGeoJsonArr, geoJsonArr, 
       spiderfyOnMaxZoom:true,
       maxClusterRadius:clusterValue
     }))
-  }, [ clusterValue, renderCluster])
-
-  const geoJsonMarker = {
-    radius:8,
-    fillColor:"#ff7800",
-    color:"#000",
-    weight: 1,
-    opacity:1,
-    fillOpacity: 0.8
-}
-
+  }, [clusterValue, renderCluster])
 
   return (
     <>
-      <InheritMap map={map} base={base} index={index} clickCount={clickCount} nameAndMapArr ={nameAndMapArr} toGeoJsonArr={toGeoJsonArr}  geoJsonArr={geoJsonArr} heatLayerValue={heatLayerValue} markers={markers} renderCluster={renderCluster} clusterIndex={clusterIndex} geoJsonObj={geoJsonObj} clusterValue={clusterValue}/>
+      <InheritMap map={map} base={base} index={index} clickCount={clickCount} nameAndMapArr ={nameAndMapArr} toGeoJsonArr={toGeoJsonArr}  geoJsonArr={geoJsonArr} heatLayerValue={heatLayerValue} markers={markers} renderCluster={renderCluster} clusterIndex={clusterIndex} geoJsonObj={geoJsonObj} clusterValue={clusterValue} clickedImage={clickedImage}/>
     </>
   );
 };
